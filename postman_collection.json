@@ -1,0 +1,487 @@
+{
+	"info": {
+		"_postman_id": "ecommerce-admin-api",
+		"name": "E-commerce Admin API (Updated)",
+		"description": "API collection for the Ecommerce Admin Dashboard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "List Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Create Product",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Sample Product\",\n    \"description\": \"A test product\",\n    \"price\": 19.99\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "products"]
+						}
+					}
+				},
+				{
+					"name": "Get Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "products", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Product",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated Product\",\n    \"price\": 29.99\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "products", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Product",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/products/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "products", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Inventory",
+			"item": [
+				{
+					"name": "List Inventory",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory"]
+						}
+					}
+				},
+				{
+					"name": "Create Inventory",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\": 1,\n    \"quantity\": 100,\n    \"low_stock_threshold\": 10\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory"]
+						}
+					}
+				},
+				{
+					"name": "Get Inventory Item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Inventory",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantity\": 80\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Inventory",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "1"]
+						}
+					}
+				},
+				{
+					"name": "Inventory Status",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/status",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "status"]
+						}
+					}
+				},
+				{
+					"name": "Low Stock Alerts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/alerts",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "alerts"]
+						}
+					}
+				},
+				{
+					"name": "Inventory History",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/history",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "history"]
+						}
+					}
+				},
+				{
+					"name": "Inventory History for Item",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/inventory/history/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "inventory", "history", "1"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Sales",
+			"item": [
+				{
+					"name": "List Sales",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales"]
+						}
+					}
+				},
+				{
+					"name": "Create Sale",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"product_id\": 1,\n    \"quantity\": 2,\n    \"total_amount\": 39.98,\n    \"sale_date\": \"2024-03-19T12:00:00Z\"\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales"]
+						}
+					}
+				},
+				{
+					"name": "Get Sale",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "1"]
+						}
+					}
+				},
+				{
+					"name": "Update Sale",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"quantity\": 3,\n    \"total_amount\": 59.97\n}"
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "1"]
+						}
+					}
+				},
+				{
+					"name": "Delete Sale",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Product Revenue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/revenue/product/1",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "revenue", "product", "1"]
+						}
+					}
+				},
+				{
+					"name": "Get Daily Revenue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/revenue/daily?start_date=2024-01-01T00:00:00Z&end_date=2024-01-31T23:59:59Z",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "revenue", "daily"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-01-31T23:59:59Z"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Weekly Revenue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/revenue/weekly?start_date=2024-01-01T00:00:00Z&end_date=2024-01-31T23:59:59Z",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "revenue", "weekly"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-01-31T23:59:59Z"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Monthly Revenue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/revenue/monthly?start_date=2024-01-01T00:00:00Z&end_date=2024-12-31T23:59:59Z",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "revenue", "monthly"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-31T23:59:59Z"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Annual Revenue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/revenue/annual?start_date=2024-01-01T00:00:00Z&end_date=2024-12-31T23:59:59Z",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "revenue", "annual"],
+							"query": [
+								{
+									"key": "start_date",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "end_date",
+									"value": "2024-12-31T23:59:59Z"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Compare Revenue",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://127.0.0.1:8000/api/sales/revenue/compare?period1_start=2024-01-01T00:00:00Z&period1_end=2024-01-31T23:59:59Z&period2_start=2024-02-01T00:00:00Z&period2_end=2024-02-29T23:59:59Z",
+							"protocol": "http",
+							"host": ["127.0.0.1"],
+							"port": "8000",
+							"path": ["api", "sales", "revenue", "compare"],
+							"query": [
+								{
+									"key": "period1_start",
+									"value": "2024-01-01T00:00:00Z"
+								},
+								{
+									"key": "period1_end",
+									"value": "2024-01-31T23:59:59Z"
+								},
+								{
+									"key": "period2_start",
+									"value": "2024-02-01T00:00:00Z"
+								},
+								{
+									"key": "period2_end",
+									"value": "2024-02-29T23:59:59Z"
+								}
+							]
+						}
+					}
+				}
+			]
+		}
+	]
+} 
