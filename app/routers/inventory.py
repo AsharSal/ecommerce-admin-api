@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.orm import Session
-from sqlalchemy import func
+from sqlalchemy import func, case
 from typing import List, Optional
 from datetime import datetime, timedelta
 from app.db.session import get_db
@@ -36,7 +36,7 @@ def get_inventory_status(
         Product.name.label('product_name'),
         Inventory.quantity,
         Inventory.low_stock_threshold,
-        func.case(
+        case(
             (Inventory.quantity <= Inventory.low_stock_threshold, 'Low Stock'),
             (Inventory.quantity == 0, 'Out of Stock'),
             else_='In Stock'
@@ -59,7 +59,7 @@ def get_low_stock_alerts(
         Product.name.label('product_name'),
         Inventory.quantity,
         Inventory.low_stock_threshold,
-        func.case(
+        case(
             (Inventory.quantity <= Inventory.low_stock_threshold, 'Low Stock'),
             (Inventory.quantity == 0, 'Out of Stock'),
             else_='In Stock'
@@ -73,53 +73,39 @@ def get_low_stock_alerts(
 
     return query.all()
 
-@router.post("/", response_model=InventoryResponse)
-def create_inventory(inventory: InventoryCreate, db: Session = Depends(get_db)):
-    """Create a new inventory item"""
-    # Check if product exists
-    product = db.query(Product).filter(Product.id == inventory.product_id).first()
-    if not product:
-        raise HTTPException(status_code=404, detail="Product not found")
-    
-    # Check if inventory already exists for this product
-    existing_inventory = db.query(Inventory).filter(Inventory.product_id == inventory.product_id).first()
-    if existing_inventory:
-        raise HTTPException(status_code=400, detail="Inventory already exists for this product")
-    
-    db_inventory = Inventory(**inventory.model_dump())
-    db.add(db_inventory)
-    db.commit()
-    db.refresh(db_inventory)
-    return db_inventory
-
-@router.get("/{inventory_id}", response_model=InventoryResponse)
-def get_inventory_item(inventory_id: int, db: Session = Depends(get_db)):
-    """Get a specific inventory item"""
-    inventory = db.query(Inventory).filter(Inventory.id == inventory_id).first()
-    if inventory is None:
-        raise HTTPException(status_code=404, detail="Inventory not found")
-    return inventory
-
-@router.put("/{inventory_id}", response_model=InventoryResponse)
-def update_inventory(
-    inventory_id: int,
-    inventory: InventoryUpdate,
-    db: Session = Depends(get_db)
+@router.get("/history", response_model=List[InventoryHistory])
+def get_all_inventory_history(
+    db: Session = Depends(get_db),
+    start_date: Optional[datetime] = None,
+    end_date: Optional[datetime] = None,
+    product_id: Optional[int] = None
 ):
-    """Update an inventory item"""
-    db_inventory = db.query(Inventory).filter(Inventory.id == inventory_id).first()
-    if db_inventory is None:
-        raise HTTPException(status_code=404, detail="Inventory not found")
-    
-    # Store old quantity for history
-    old_quantity = db_inventory.quantity
-    
-    for key, value in inventory.model_dump(exclude_unset=True).items():
-        setattr(db_inventory, key, value)
-    
-    db.commit()
-    db.refresh(db_inventory)
-    return db_inventory
+    """Get inventory change history for all items or specific product"""
+    if not start_date:
+        start_date = datetime.utcnow() - timedelta(days=30)
+    if not end_date:
+        end_date = datetime.utcnow()
+
+    query = db.query(
+        Inventory.id,
+        Product.name.label('product_name'),
+        Inventory.quantity,
+        Inventory.low_stock_threshold,
+        Inventory.updated_at.label('change_date'),
+        case(
+            (Inventory.quantity <= Inventory.low_stock_threshold, 'Low Stock'),
+            (Inventory.quantity == 0, 'Out of Stock'),
+            else_='In Stock'
+        ).label('status')
+    ).join(Product).filter(
+        Inventory.updated_at >= start_date,
+        Inventory.updated_at <= end_date
+    )
+
+    if product_id:
+        query = query.filter(Inventory.product_id == product_id)
+
+    return query.order_by(Inventory.updated_at.desc()).all()
 
 @router.get("/history/{inventory_id}", response_model=List[InventoryHistory])
 def get_inventory_history(
@@ -145,7 +131,7 @@ def get_inventory_history(
         Inventory.quantity,
         Inventory.low_stock_threshold,
         Inventory.updated_at.label('change_date'),
-        func.case(
+        case(
             (Inventory.quantity <= Inventory.low_stock_threshold, 'Low Stock'),
             (Inventory.quantity == 0, 'Out of Stock'),
             else_='In Stock'
@@ -158,39 +144,53 @@ def get_inventory_history(
 
     return history
 
-@router.get("/history", response_model=List[InventoryHistory])
-def get_all_inventory_history(
-    db: Session = Depends(get_db),
-    start_date: Optional[datetime] = None,
-    end_date: Optional[datetime] = None,
-    product_id: Optional[int] = None
+@router.get("/{inventory_id}", response_model=InventoryResponse)
+def get_inventory_item(inventory_id: int, db: Session = Depends(get_db)):
+    """Get a specific inventory item"""
+    inventory = db.query(Inventory).filter(Inventory.id == inventory_id).first()
+    if inventory is None:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+    return inventory
+
+@router.post("/", response_model=InventoryResponse)
+def create_inventory(inventory: InventoryCreate, db: Session = Depends(get_db)):
+    """Create a new inventory item"""
+    # Check if product exists
+    product = db.query(Product).filter(Product.id == inventory.product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+    
+    # Check if inventory already exists for this product
+    existing_inventory = db.query(Inventory).filter(Inventory.product_id == inventory.product_id).first()
+    if existing_inventory:
+        raise HTTPException(status_code=400, detail="Inventory already exists for this product")
+    
+    db_inventory = Inventory(**inventory.model_dump())
+    db.add(db_inventory)
+    db.commit()
+    db.refresh(db_inventory)
+    return db_inventory
+
+@router.put("/{inventory_id}", response_model=InventoryResponse)
+def update_inventory(
+    inventory_id: int,
+    inventory: InventoryUpdate,
+    db: Session = Depends(get_db)
 ):
-    """Get inventory change history for all items or specific product"""
-    if not start_date:
-        start_date = datetime.utcnow() - timedelta(days=30)
-    if not end_date:
-        end_date = datetime.utcnow()
-
-    query = db.query(
-        Inventory.id,
-        Product.name.label('product_name'),
-        Inventory.quantity,
-        Inventory.low_stock_threshold,
-        Inventory.updated_at.label('change_date'),
-        func.case(
-            (Inventory.quantity <= Inventory.low_stock_threshold, 'Low Stock'),
-            (Inventory.quantity == 0, 'Out of Stock'),
-            else_='In Stock'
-        ).label('status')
-    ).join(Product).filter(
-        Inventory.updated_at >= start_date,
-        Inventory.updated_at <= end_date
-    )
-
-    if product_id:
-        query = query.filter(Inventory.product_id == product_id)
-
-    return query.order_by(Inventory.updated_at.desc()).all()
+    """Update an inventory item"""
+    db_inventory = db.query(Inventory).filter(Inventory.id == inventory_id).first()
+    if db_inventory is None:
+        raise HTTPException(status_code=404, detail="Inventory not found")
+    
+    # Store old quantity for history
+    old_quantity = db_inventory.quantity
+    
+    for key, value in inventory.model_dump(exclude_unset=True).items():
+        setattr(db_inventory, key, value)
+    
+    db.commit()
+    db.refresh(db_inventory)
+    return db_inventory
 
 @router.delete("/{inventory_id}")
 def delete_inventory(inventory_id: int, db: Session = Depends(get_db)):

@@ -39,7 +39,6 @@ class InventoryUpdate(InventoryBase):
 class InventoryResponse(InventoryBase):
     id: int
     product_id: int
-    last_updated: datetime
     created_at: datetime
     updated_at: datetime
     product: ProductResponse
